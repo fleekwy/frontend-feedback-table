@@ -46,7 +46,7 @@ const FeedbackTextCell = ({
     const MAX_COLLAPSED_HEIGHT_EM = 4.5;
 
     useLayoutEffect(() => {
-        if (textRef.current) {
+        if (textRef.current && text) {
             const scrollH = textRef.current.scrollHeight;
             setContentHeight(scrollH);
 
@@ -89,6 +89,10 @@ const FeedbackTextCell = ({
 
         setIsExpanded(!isExpanded);
     };
+
+    if (!text) {
+        return <span className="text-slate-400 text-base font-medium">—</span>;
+    }
 
     return (
         <div ref={containerRef} className="flex flex-col items-start relative">
@@ -168,19 +172,27 @@ export function NativeTable({
                             ref={measureElement}
                             data-index={item.virtualIndex}
                         >
-                            <td className="text-center p-3 text-sm text-slate-500">#{item.id}</td>
+                            <td className="text-center p-3 text-sm text-slate-500">
+                                #{item.id ?? 'N/A'}
+                            </td>
                             <td className="p-3">
                                 <span
-                                    className={`flex items-center justify-center ${item.rating === 5 ? 'text-green-500' : item.rating === 1 ? 'text-red-500' : 'text-yellow-500'}`}
+                                    className={`flex items-center justify-center ${
+                                        item.rating === 5
+                                            ? 'text-green-500'
+                                            : item.rating === 1
+                                              ? 'text-red-500'
+                                              : 'text-yellow-500'
+                                    }`}
                                 >
                                     <StarIcon className="w-5 h-5" />
                                     <span className="text-sm text-slate-500 font-medium ml-2">
-                                        {item.rating}
+                                        {item.rating ?? 'N/A'}
                                     </span>
                                 </span>
                             </td>
                             <td className="text-center p-3 text-sm text-slate-500">
-                                {formatClockString(new Date(item.date_time))}
+                                {formatClockString(item.date_time ? new Date(item.date_time) : null)}
                             </td>
                             <td className="text-left p-3">
                                 <FeedbackTextCell

@@ -36,7 +36,7 @@ export function PaginatedTable({
     if (items.length === 0) {
         return (
             <div className="flex justify-center text-xl text-slate-500 font-medium mt-20">
-                Нет данных для отображения...
+                {isLoading ? 'Загрузка данных...' : 'Нет данных для отображения...'}
             </div>
         );
     }
@@ -52,7 +52,7 @@ export function PaginatedTable({
             </div>
 
             <div className="h-6 my-2">
-                <PageSwitcher countPages={totalPages} />
+                {totalPages > 0 && <PageSwitcher countPages={totalPages} />}
             </div>
         </div>
     );

@@ -1,5 +1,5 @@
-export const formatClockString = (date: Date): string => {
-    if (isNaN(date.getTime())) return '';
+export const formatClockString = (date: Date | null): string => {
+    if (!date || isNaN(date.getTime())) return '—';
     return new Intl.DateTimeFormat('ru-RU', {
         hour: '2-digit',
         minute: '2-digit',

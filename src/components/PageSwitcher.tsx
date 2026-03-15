@@ -10,6 +10,8 @@ export function PageSwitcher({ countPages }: { countPages: number }) {
     const { urlParams, updateUrl } = useAddressBar(getSettings().zustand);
     const [localPage, setLocalPage] = useState<string>(urlParams.page.toString());
 
+    const safeCountPages = Math.max(1, Math.floor(countPages) || 1);
+
     useEffect(() => {
         setLocalPage(urlParams.page.toString());
     }, [urlParams.page]);
@@ -26,7 +28,7 @@ export function PageSwitcher({ countPages }: { countPages: number }) {
             return;
         }
 
-        const targetPage = Math.min(numVal, countPages);
+        const targetPage = Math.min(numVal, safeCountPages);
         updateUrl({ page: targetPage });
     };
 
@@ -35,14 +37,14 @@ export function PageSwitcher({ countPages }: { countPages: number }) {
     }
 
     function handleNextPage() {
-        updateUrl({ page: Math.min(countPages, urlParams.page + 1) });
+        updateUrl({ page: Math.min(safeCountPages, urlParams.page + 1) });
     }
 
     return (
         <div className="flex items-center justify-center gap-3 bg-none h-1/2 w-full rounded-lg">
             <button
                 onClick={handlePrevPage}
-                disabled={urlParams.page === 1}
+                disabled={urlParams.page === 1 || safeCountPages <= 1}
                 className="flex items-center justify-center text-blue-500 text-2xl bg-none w-8 h-8 rounded-md cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition hover:bg-slate-200"
             >
                 <ChevronsLeft size={25} strokeWidth={2.5} />
@@ -50,7 +52,7 @@ export function PageSwitcher({ countPages }: { countPages: number }) {
             <input
                 type="number"
                 min={1}
-                max={countPages}
+                max={safeCountPages}
                 inputMode="numeric"
                 value={localPage}
                 onChange={handleInputChange}
@@ -65,7 +67,7 @@ export function PageSwitcher({ countPages }: { countPages: number }) {
             <button
                 className="flex items-center justify-center text-blue-500 text-3xl bg-none w-8 h-8 rounded-md cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition hover:bg-slate-200"
                 onClick={handleNextPage}
-                disabled={urlParams.page === countPages}
+                disabled={urlParams.page === safeCountPages || safeCountPages <= 1}
             >
                 <ChevronsRight size={25} strokeWidth={2.5} />
             </button>

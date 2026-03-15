@@ -5,6 +5,7 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { useStore } from '@store';
 import { NativeTable, TanstackTable } from '@components';
 import { useAddressBar } from '@hooks';
+import type { Feedback } from '@interfaces';
 
 export function TanstackVirtualApi() {
     console.log('TanstackVirtualApi');
@@ -29,7 +30,8 @@ export function TanstackVirtualApi() {
             return await getFeedbacks(params, signal);
         },
         getNextPageParam: (lastPage, allPages) => {
-            return lastPage.items.length < pageSize ? undefined : allPages.length + 1;
+            const itemsCount = lastPage?.items?.length ?? 0;
+            return itemsCount < pageSize ? undefined : allPages.length + 1;
         },
         initialPageParam: 1,
     });
@@ -38,8 +40,10 @@ export function TanstackVirtualApi() {
         getFeedbacksQuery;
 
     const allItems = useMemo(() => {
-        return data?.pages.flatMap((page) => page.items) ?? [];
+        return data?.pages.flatMap((page) => page.items ?? []) ?? [];
     }, [data]);
+
+    const isEmptyData = !isLoading && !isError && allItems.length === 0;
 
     const virtualizer = useVirtualizer({
         count: allItems.length,
@@ -68,7 +72,7 @@ export function TanstackVirtualApi() {
             ? (virtualizer.getTotalSize() ?? 0) - virtualItems[virtualItems.length - 1].end
             : 0;
 
-    if (isLoading) {
+    if (isLoading && allItems.length === 0) {
         return (
             <div className="flex justify-center text-xl text-slate-500 font-medium mt-20">
                 Загрузка...
@@ -84,7 +88,7 @@ export function TanstackVirtualApi() {
         );
     }
 
-    if (allItems.length === 0) {
+    if (isEmptyData) {
         return (
             <div className="flex justify-center text-xl text-slate-500 font-medium mt-20">
                 Нет данных для отображения...
@@ -92,7 +96,9 @@ export function TanstackVirtualApi() {
         );
     }
 
-    const visibleItems = (virtualItems ?? []).map((v) => allItems[v.index]).filter(Boolean);
+    const visibleItems = (virtualItems ?? [])
+        .map((v) => allItems[v.index])
+        .filter((item): item is Feedback => item !== undefined);
 
     return (
         <div

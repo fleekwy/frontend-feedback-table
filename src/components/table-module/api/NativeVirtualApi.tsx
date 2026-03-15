@@ -35,7 +35,7 @@ export function NativeVirtualApi() {
 
     const { data, isFetching, error, isLoading } = getFeedbacksQuery;
 
-    const isLastPage = data && data.items.length < pageSize;
+    const isLastPage = data?.items && data.items.length < pageSize;
 
     useEffect(() => {
         setLocalPage(1);
@@ -92,10 +92,10 @@ export function NativeVirtualApi() {
     if (error)
         return (
             <div className="flex justify-center text-xl text-red-500 font-medium mt-20">
-                {error.message}
+                {error instanceof Error ? error.message : 'Ошибка загрузки'}
             </div>
         );
-    if (allItems.length === 0 && !isLoading)
+    if (allItems.length === 0 && !isLoading && !isFetching)
         return (
             <div className="flex justify-center text-xl text-slate-500 font-medium mt-20">
                 Нет данных для отображения...

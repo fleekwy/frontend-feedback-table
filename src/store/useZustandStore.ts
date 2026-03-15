@@ -47,7 +47,7 @@ export const useZustandStore = create<State>((set, get) => ({
             });
             console.log('API response:', res);
             set({
-                allItems: res.items || [],
+                allItems: res.items ?? [],
                 isLoading: false,
                 isError: false,
             });

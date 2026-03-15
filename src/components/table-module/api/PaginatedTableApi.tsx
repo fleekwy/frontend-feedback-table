@@ -33,8 +33,8 @@ export function PaginatedTableApi() {
     });
     const { data, error, isError, isLoading } = getFeedbacksQuery;
 
-    const items = useMemo(() => data?.items || [], [data]);
-    const totalPages = useMemo(() => data?.totalPages || 0, [data]);
+    const items = useMemo(() => data?.items ?? [], [data]);
+    const totalPages = useMemo(() => data?.totalPages ?? 0, [data]);
 
     return (
         <PaginatedTable

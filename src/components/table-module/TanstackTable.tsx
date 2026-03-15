@@ -46,7 +46,7 @@ const FeedbackTextCell = ({ text }: { text: string }) => {
     const MAX_COLLAPSED_HEIGHT_EM = 4.5;
 
     useLayoutEffect(() => {
-        if (textRef.current) {
+        if (textRef.current && text) {
             const scrollH = textRef.current.scrollHeight;
             setContentHeight(scrollH);
 
@@ -88,6 +88,10 @@ const FeedbackTextCell = ({ text }: { text: string }) => {
 
         setIsExpanded(!isExpanded);
     };
+
+    if (!text) {
+        return <span className="text-slate-400 text-base font-medium">—</span>;
+    }
 
     return (
         <div ref={containerRef} className="flex flex-col items-start relative">
@@ -135,7 +139,7 @@ export function TanstackTable({
         return [
             columnHelper.accessor('id', {
                 header: 'ID',
-                cell: (props) => `#${props.getValue()}`,
+                cell: (props) => `#${props.getValue() ?? 'N/A'}`,
             }),
             columnHelper.accessor('rating', {
                 header: 'Рейтинг',
@@ -151,7 +155,7 @@ export function TanstackTable({
                         <span className={`flex items-center justify-center ${colorClass}`}>
                             <StarIcon className="w-5 h-5" />
                             <span className="text-sm text-slate-500 font-medium ml-2">
-                                {rating}
+                                {rating ?? 'N/A'}
                             </span>
                         </span>
                     );
@@ -159,7 +163,7 @@ export function TanstackTable({
             }),
             columnHelper.accessor('date_time', {
                 header: 'Дата',
-                cell: (props) => formatClockString(new Date(props.getValue())),
+                cell: (props) => formatClockString(props.getValue() ? new Date(props.getValue()) : null),
             }),
             columnHelper.accessor('feedback_text', {
                 header: 'Текст отзыва',
