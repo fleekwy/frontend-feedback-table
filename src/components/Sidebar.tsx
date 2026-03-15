@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Switcher } from '@components';
+import { SegmentToggle } from '@components';
 import { Settings, X, Menu, Plus, Minus, RefreshCw } from 'lucide-react';
 import { useStore, useZustandStore } from '@store';
 import { useAddressBar } from '@hooks';
@@ -7,7 +7,7 @@ import { useAddressBar } from '@hooks';
 export function Sidebar() {
     console.log('Sidebar');
 
-    const { get: getSettings, set: setSettings, update: updateSettings } = useStore.Settings();
+    const { get: getSettings, update: updateSettings } = useStore.Settings();
     const { urlParams, updateUrl } = useAddressBar(getSettings().zustand);
 
     const [localPageSize, setLocalPageSize] = useState<string>(urlParams.pageSize.toString());
@@ -86,7 +86,7 @@ export function Sidebar() {
 
             <div
                 className={`
-                    flex flex-col h-full w-full min-w-[350px] transition-opacity duration-400 overflow-y-auto overflow-x-hidden
+                    flex flex-col h-full w-full min-w-87.5 transition-opacity duration-400 overflow-y-auto overflow-x-hidden
                     ${isOpen ? 'opacity-100 delay-100' : 'opacity-0 pointer-events-none'}
                 `}
             >
@@ -107,13 +107,12 @@ export function Sidebar() {
                         </button>
                     </div>
 
-                    <div className="flex flex-col flex-1 gap-1.5 mb-8">
+                    <div className="flex flex-col flex-1 gap-1 mb-8">
                         <span className="text-sm font-medium text-slate-500">1. Режим таблицы</span>
-                        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-5">
-                            <span className="text-base font-medium text-slate-700 justify-self-end">
-                                Native Table
-                            </span>
-                            <Switcher
+                        <div className="flex items-center justify-center gap-5">
+                            <SegmentToggle
+                                leftLabel="Native"
+                                rightLabel="TanStack"
                                 enabled={getSettings().tanstackTable}
                                 onChange={() => {
                                     updateSettings((prev) => ({
@@ -122,48 +121,35 @@ export function Sidebar() {
                                     }));
                                 }}
                             />
-                            <span className="text-base font-medium text-slate-700 justify-self-start">
-                                TanStack Table
-                            </span>
                         </div>
 
                         <span className="text-sm font-medium text-slate-500 mt-8">
                             2. Режим просмотра
                         </span>
-                        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-5">
-                            <span className="text-base font-medium text-slate-700 justify-self-end">
-                                Пагинация
-                            </span>
-                            <Switcher
+                        <div className="flex items-center justify-center gap-5 mt-1">
+                            <SegmentToggle
+                                leftLabel="Пагинация"
+                                rightLabel="Dynamic"
                                 enabled={getSettings().dynamicMode}
                                 onChange={() => {
-                                    const current = getSettings();
-                                    const isDynamicMode = !current.dynamicMode;
-                                    setSettings({
-                                        ...current,
-                                        dynamicMode: isDynamicMode,
-                                        tanstackVirtual: isDynamicMode
-                                            ? current.tanstackVirtual
-                                            : false,
-                                    });
+                                    updateSettings((prev) => ({
+                                        ...prev,
+                                        dynamicMode: !prev.dynamicMode,
+                                    }));
                                 }}
                             />
-                            <span className="text-base font-medium text-slate-700 justify-self-start">
-                                Dynamic Mode
-                            </span>
                         </div>
 
                         <div
-                            className={`transition ${!getSettings().dynamicMode ? 'opacity-40 pointer-events-none' : ''}`}
+                            className={`mt-2 transition ${!getSettings().dynamicMode ? 'opacity-40 pointer-events-none' : ''}`}
                         >
                             <span className="text-sm font-medium text-slate-500 mt-0 pl-4">
-                                Режим динамической таблицы
+                                Режим виртуализации
                             </span>
-                            <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-5">
-                                <span className="text-base font-medium text-slate-700 justify-self-end">
-                                    Native
-                                </span>
-                                <Switcher
+                            <div className="flex items-center justify-center gap-5 mt-1">
+                                <SegmentToggle
+                                    leftLabel="Native"
+                                    rightLabel="TanStack"
                                     enabled={getSettings().tanstackVirtual}
                                     onChange={() =>
                                         updateSettings((prev) => ({
@@ -172,21 +158,16 @@ export function Sidebar() {
                                         }))
                                     }
                                 />
-                                <span className="text-base font-medium text-slate-700 justify-self-start">
-                                    TanStack Virtual
-                                </span>
                             </div>
                         </div>
 
                         <span className="text-sm font-medium text-slate-500 mt-8">
                             3. Режим подгрузки
                         </span>
-                        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-5 mb-2">
-                            <span className="text-base font-medium text-slate-700 justify-self-end">
-                                База данных
-                            </span>
-
-                            <Switcher
+                        <div className="flex flex-col items-center gap-2 mb-2">
+                            <SegmentToggle
+                                leftLabel="База данных"
+                                rightLabel="Zustand"
                                 enabled={getSettings().zustand}
                                 onChange={() =>
                                     updateSettings((prev) => ({
@@ -196,34 +177,26 @@ export function Sidebar() {
                                 }
                             />
 
-                            <div className="flex items-center gap-4 justify-self-start">
-                                <span className="text-base font-medium text-slate-700">
-                                    Zustand
-                                </span>
-
-                                <button
-                                    onClick={handleRefresh}
-                                    disabled={!getSettings().zustand || isRefreshing}
-                                    className={`
-                p-1.5 rounded-lg transition-all flex items-center justify-center
-                ${
-                    !getSettings().zustand
-                        ? 'text-slate-300 cursor-not-allowed bg-transparent'
-                        : isRefreshing
-                          ? 'text-blue-400 cursor-wait'
-                          : 'text-blue-600 hover:bg-blue-100 cursor-pointer active:scale-95'
-                }
-            `}
-                                    data-tooltip-id="global-tooltip"
-                                    data-tooltip-content="Обновить данные"
-                                    data-tooltip-hidden={!getSettings().zustand || isRefreshing}
-                                >
-                                    <RefreshCw
-                                        size={18}
-                                        className={`transition-transform ${isRefreshing ? 'animate-spin' : ''}`}
-                                    />
-                                </button>
-                            </div>
+                            <button
+                                onClick={handleRefresh}
+                                disabled={!getSettings().zustand || isRefreshing}
+                                className={`
+                                    flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all
+                                    ${
+                                        !getSettings().zustand
+                                            ? 'text-slate-300 cursor-not-allowed'
+                                            : isRefreshing
+                                              ? 'text-blue-400 cursor-wait'
+                                              : 'text-blue-600 hover:bg-blue-100 cursor-pointer active:scale-95'
+                                    }
+                                `}
+                            >
+                                <RefreshCw
+                                    size={18}
+                                    className={`transition-transform ${isRefreshing ? 'animate-spin' : ''}`}
+                                />
+                                <span className="text-sm font-medium">Обновить данные</span>
+                            </button>
                         </div>
                     </div>
 
