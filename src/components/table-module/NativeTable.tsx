@@ -137,7 +137,8 @@ export function NativeTable({
     const { searchTerm, caseSensitive, wholeWord } = urlParams;
 
     return (
-        <table className="w-full divide-y divide-slate-100 relative table-fixed">
+        <div className="flex flex-col overflow-x-auto min-h-0 border-2 border-slate-200 rounded-lg bg-white">
+            <table className="w-full divide-y divide-slate-100 relative table-fixed min-w-[600px]">
             <thead className="bg-slate-100 table-fixed sticky top-0 z-10 shadow-sm h-12">
                 <tr>
                     <th className="text-center text-sm font-medium text-slate-500 uppercase w-[10%]">
@@ -213,5 +214,6 @@ export function NativeTable({
                 ) : null}
             </tbody>
         </table>
+        </div>
     );
 }

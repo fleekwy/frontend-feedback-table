@@ -17,7 +17,7 @@ export function SegmentToggle({
         <div
             className={`
                 flex items-center justify-center
-                w-64 h-11
+                w-56 sm:w-64 h-10 sm:h-11
                 rounded-lg
                 overflow-hidden
                 cursor-pointer
@@ -35,7 +35,7 @@ export function SegmentToggle({
                     ${enabled ? 'bg-slate-200 text-slate-500' : 'bg-blue-500 text-white'}
                 `}
             >
-                <span className="text-md font-medium whitespace-nowrap px-2">{leftLabel}</span>
+                <span className="text-xs sm:text-sm font-medium whitespace-nowrap px-2">{leftLabel}</span>
             </div>
 
             {/* Right segment */}
@@ -47,7 +47,7 @@ export function SegmentToggle({
                     ${enabled ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-500'}
                 `}
             >
-                <span className="text-md font-medium whitespace-nowrap px-2">{rightLabel}</span>
+                <span className="text-xs sm:text-sm font-medium whitespace-nowrap px-2">{rightLabel}</span>
             </div>
         </div>
     );

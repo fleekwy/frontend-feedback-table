@@ -41,13 +41,13 @@ export function PageSwitcher({ countPages }: { countPages: number }) {
     }
 
     return (
-        <div className="flex items-center justify-center gap-3 bg-none h-1/2 w-full rounded-lg">
+        <div className="flex items-center justify-center gap-2 sm:gap-3 bg-none h-1/2 w-full rounded-lg">
             <button
                 onClick={handlePrevPage}
                 disabled={urlParams.page === 1 || safeCountPages <= 1}
-                className="flex items-center justify-center text-blue-500 text-2xl bg-none w-8 h-8 rounded-md cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition hover:bg-slate-200"
+                className="flex items-center justify-center text-blue-500 text-xl sm:text-2xl bg-none w-7 h-7 sm:w-8 sm:h-8 rounded-md cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition hover:bg-slate-200"
             >
-                <ChevronsLeft size={25} strokeWidth={2.5} />
+                <ChevronsLeft size={20} className="sm:w-6 sm:h-6" strokeWidth={2.5} />
             </button>
             <input
                 type="number"
@@ -62,14 +62,14 @@ export function PageSwitcher({ countPages }: { countPages: number }) {
                         (e.target as HTMLInputElement).blur();
                     }
                 }}
-                className="w-14 h-7 text-center text-slate-700 bg-slate-50 border border-slate-300 rounded-md focus:outline-none focus:border-blue-500 no-spinner"
+                className="w-12 h-7 sm:w-14 sm:h-7 text-center text-slate-700 bg-slate-50 border border-slate-300 rounded-md focus:outline-none focus:border-blue-500 no-spinner text-sm sm:text-base"
             />
             <button
-                className="flex items-center justify-center text-blue-500 text-3xl bg-none w-8 h-8 rounded-md cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition hover:bg-slate-200"
+                className="flex items-center justify-center text-blue-500 text-2xl sm:text-3xl bg-none w-7 h-7 sm:w-8 sm:h-8 rounded-md cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition hover:bg-slate-200"
                 onClick={handleNextPage}
                 disabled={urlParams.page === safeCountPages || safeCountPages <= 1}
             >
-                <ChevronsRight size={25} strokeWidth={2.5} />
+                <ChevronsRight size={20} className="sm:w-6 sm:h-6" strokeWidth={2.5} />
             </button>
         </div>
     );

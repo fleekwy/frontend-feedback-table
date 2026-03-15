@@ -186,7 +186,8 @@ export function TanstackTable({
         : rows;
 
     return (
-        <table className="w-full divide-y divide-slate-100 relative table-fixed">
+        <div className="flex flex-col overflow-x-auto min-h-0 border-2 border-slate-200 rounded-lg bg-white">
+            <table className="w-full divide-y divide-slate-100 relative table-fixed min-w-[600px]">
             <thead className="bg-blue-100 table-fixed sticky top-0 z-10 shadow-sm h-12">
                 {table.getHeaderGroups().map((headerGroup) => (
                     <tr key={headerGroup.id}>
@@ -237,5 +238,6 @@ export function TanstackTable({
                 ) : null}
             </tbody>
         </table>
+        </div>
     );
 }

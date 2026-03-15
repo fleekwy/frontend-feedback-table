@@ -61,9 +61,9 @@ export function Sidebar() {
     return (
         <aside
             className={`
-                flex flex-col items-center h-[90%] mt-8 ml-4 overflow-hidden
+                flex flex-col items-center h-[90%] mt-4 sm:mt-8 ml-2 sm:ml-4 overflow-hidden
                 transition-all duration-500 ease-in-out relative
-                ${isOpen ? 'w-90 bg-slate-50 border-2 border-slate-200 rounded-2xl' : 'w-20 bg-white'}
+                ${isOpen ? 'w-72 sm:w-90 bg-slate-50 border-2 border-slate-200 rounded-2xl' : 'w-16 sm:w-20 bg-white'}
             `}
         >
             <div
@@ -80,7 +80,7 @@ export function Sidebar() {
                     data-tooltip-content="Открыть настройки"
                     data-tooltip-hidden={isOpen}
                 >
-                    <Menu size={40} className="text-slate-500" />
+                    <Menu size={32} className="text-slate-500 sm:w-10 sm:h-10" />
                 </button>
             </div>
 

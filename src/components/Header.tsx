@@ -34,29 +34,29 @@ export function Header() {
     }
 
     return (
-        <header className="h-24 border-b-3 border-slate-200 flex items-center justify-between px-6 bg-white">
-            <h1 className="text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-linear-to-r from-blue-800 via-blue-600 to-blue-400 m-4 pb-1">
+        <header className="h-20 sm:h-24 border-b-3 border-slate-200 flex items-center justify-between px-4 sm:px-6 bg-white gap-4">
+            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-linear-to-r from-blue-800 via-blue-600 to-blue-400 m-4 pb-1 whitespace-nowrap">
                 Отзывы
             </h1>
-            <div className="w-130 h-12 pr-8 inline-flex items-center gap-2">
-                <Search size={40} className="text-slate-500" />
+            <div className="w-full max-w-md h-10 sm:h-12 inline-flex items-center gap-2">
+                <Search size={32} className="text-slate-500 flex-shrink-0" />
                 <div className="flex items-center w-full border border-slate-300 rounded-lg bg-slate-100 focus-within:ring-2 focus-within:ring-blue-500 transition overflow-hidden">
                     <input
                         type="text"
                         placeholder="Поиск..."
-                        className="grow bg-transparent text-slate-800 text-xl px-4 py-2 border-none focus:outline-none focus:ring-0 placeholder:text-slate-400"
+                        className="grow bg-transparent text-slate-800 sm:text-xl px-3 sm:px-4 py-2 border-none focus:outline-none focus:ring-0 placeholder:text-slate-400 text-base min-w-0"
                         value={localSearchterm}
                         onChange={handleSearchChange}
                     />
 
-                    <div className="flex items-center pr-2 gap-1">
+                    <div className="flex items-center pr-1 sm:pr-2 gap-1 flex-shrink-0">
                         <button
                             className={`p-1 hover:bg-slate-200 rounded text-blue-500 ${urlParams.caseSensitive ? 'border-blue-400 border-2' : 'border-2 border-slate-100'}`}
                             data-tooltip-id="global-tooltip"
                             data-tooltip-content="Поиск с учетом регистра"
                             onClick={handleSensitiveChange}
                         >
-                            <CaseSensitive size={20} />
+                            <CaseSensitive size={18} className="sm:w-5 sm:h-5" />
                         </button>
                         <button
                             className={`p-1 hover:bg-slate-200 rounded text-blue-500 ${urlParams.wholeWord ? 'border-blue-400 border-2' : 'border-2 border-slate-100'}`}
@@ -64,7 +64,7 @@ export function Header() {
                             data-tooltip-content="Поиск слова целиком"
                             onClick={handleWholewordChange}
                         >
-                            <WholeWord size={20} />
+                            <WholeWord size={18} className="sm:w-5 sm:h-5" />
                         </button>
                     </div>
                 </div>
