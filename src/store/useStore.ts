@@ -7,9 +7,7 @@ const defaults: {
     settings: Settings;
 } = {
     settings: {
-        tanstackTable: false,
-        tanstackVirtual: false,
-        zustand: false,
+        tanstackTable: true,
         dynamicMode: false,
     },
 };
@@ -81,17 +79,17 @@ function useStoreHook<K extends keyof typeof keys>(
     }, [key, value, group]);
 
     useEffect(() => {
-        const handleCustomUpdate = (e: CustomEvent<(typeof defaults)[K]>) => {
-            if (!isEqual(e.detail, value)) {
+        const handleCustomUpdate = (e: Event) => {
+            if (e instanceof CustomEvent && !isEqual(e.detail, value)) {
                 setValue(e.detail);
             }
         };
 
-        window.addEventListener(`localstorage-update-${key}`, handleCustomUpdate as EventListener);
+        window.addEventListener(`localstorage-update-${key}`, handleCustomUpdate);
         return () =>
             window.removeEventListener(
                 `localstorage-update-${key}`,
-                handleCustomUpdate as EventListener
+                handleCustomUpdate
             );
     }, [key, value]);
 

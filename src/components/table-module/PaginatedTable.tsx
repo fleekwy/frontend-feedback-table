@@ -1,6 +1,6 @@
-import { NativeTable, TanstackTable, PageSwitcher } from '@components';
-import { useStore } from '@store';
+import { TanstackTable, PageSwitcher, NativeTable } from '@components';
 import type { Feedback } from '@interfaces';
+import { useStore } from '@store';
 
 export function PaginatedTable({
     items,
@@ -16,7 +16,8 @@ export function PaginatedTable({
     totalPages: number;
 }) {
     console.log('PaginatedTable');
-    const { get: getSettings } = useStore.Settings();
+
+    const { get } = useStore.Settings();
 
     if (isLoading) {
         return (
@@ -44,7 +45,7 @@ export function PaginatedTable({
     return (
         <div className="flex flex-col justify-between h-full gap-2">
             <div className="flex flex-col overflow-y-auto min-h-0 bg-white">
-                {getSettings().tanstackTable ? (
+                {get().tanstackTable ? (
                     <TanstackTable items={items} />
                 ) : (
                     <NativeTable items={items} />

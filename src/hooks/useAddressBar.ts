@@ -1,12 +1,10 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useZustandStore } from '@store';
 import { FeedbackSort } from '@constants';
 import type { FeedbackSort as FeedbackSortType } from '@interfaces';
 
-export const useAddressBar = (useZustand: boolean) => {
+export const useAddressBar = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-    const zustandSearchLocal = useZustandStore((state) => state.searchLocal);
 
     const urlParams = useMemo(
         () => ({
@@ -23,14 +21,6 @@ export const useAddressBar = (useZustand: boolean) => {
         }),
         [searchParams]
     );
-
-    const allItems = useZustandStore((state) => state.allItems);
-
-    useEffect(() => {
-        if (useZustand) {
-            zustandSearchLocal(urlParams.searchTerm, urlParams.caseSensitive, urlParams.wholeWord);
-        }
-    }, [useZustand, urlParams, zustandSearchLocal, allItems]);
 
     const updateUrl = (newParams: Record<string, unknown>) => {
         const nextParams = new URLSearchParams(searchParams);

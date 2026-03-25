@@ -7,10 +7,9 @@ import {
 } from '@tanstack/react-table';
 import { type Feedback } from '@interfaces';
 import { StarIcon } from '@components/icons/StarIcon';
-import { useStore } from '@store';
-import type { VirtualItem } from '@tanstack/react-virtual';
 import { formatClockString, getHighlightedText } from '@utils';
 import { useAddressBar } from '@hooks';
+import type { VirtualItem } from '@tanstack/react-virtual';
 
 const getScrollParent = (node: HTMLElement | null): HTMLElement | null => {
     if (!node) {
@@ -32,8 +31,7 @@ const getScrollParent = (node: HTMLElement | null): HTMLElement | null => {
 };
 
 const FeedbackTextCell = ({ text }: { text: string }) => {
-    const { get } = useStore.Settings();
-    const { urlParams } = useAddressBar(get().zustand);
+    const { urlParams } = useAddressBar();
     const { searchTerm, caseSensitive, wholeWord } = urlParams;
 
     const [isExpanded, setIsExpanded] = useState(false);
@@ -124,12 +122,14 @@ export function TanstackTable({
     paddingTop = 0,
     paddingBottom = 0,
     measureElement,
+    noWrapper = false,
 }: {
     items: Feedback[];
     virtualRows?: VirtualItem[];
     paddingTop?: number;
     paddingBottom?: number;
     measureElement?: (el: HTMLElement | null) => void;
+    noWrapper?: boolean;
 }) {
     console.log('TanstackTable');
 
@@ -163,7 +163,8 @@ export function TanstackTable({
             }),
             columnHelper.accessor('date_time', {
                 header: 'Дата',
-                cell: (props) => formatClockString(props.getValue() ? new Date(props.getValue()) : null),
+                cell: (props) =>
+                    formatClockString(props.getValue() ? new Date(props.getValue()) : null),
             }),
             columnHelper.accessor('feedback_text', {
                 header: 'Текст отзыва',
@@ -185,9 +186,8 @@ export function TanstackTable({
         ? virtualRows.filter((v) => v.index >= 0 && v.index < rows.length).map((v) => rows[v.index])
         : rows;
 
-    return (
-        <div className="flex flex-col overflow-x-auto min-h-0 border-2 border-slate-200 rounded-lg bg-white">
-            <table className="w-full divide-y divide-slate-100 relative table-fixed min-w-[600px]">
+    const tableContent = (
+        <table className="w-full divide-y divide-slate-100 relative table-fixed min-w-150">
             <thead className="bg-blue-100 table-fixed sticky top-0 z-10 shadow-sm h-12">
                 {table.getHeaderGroups().map((headerGroup) => (
                     <tr key={headerGroup.id}>
@@ -238,6 +238,15 @@ export function TanstackTable({
                 ) : null}
             </tbody>
         </table>
+    );
+
+    if (noWrapper) {
+        return tableContent;
+    }
+
+    return (
+        <div className="flex flex-col overflow-x-auto min-h-0 border-2 border-slate-200 rounded-lg bg-white">
+            {tableContent}
         </div>
     );
 }

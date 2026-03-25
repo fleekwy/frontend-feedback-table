@@ -1,34 +1,21 @@
 import { useEffect, useState } from 'react';
 import { SegmentToggle } from '@components';
-import { Settings, X, Menu, Plus, Minus, RefreshCw } from 'lucide-react';
-import { useStore, useZustandStore } from '@store';
+import { Settings, X, Menu, Plus, Minus } from 'lucide-react';
+import { useStore } from '@store';
 import { useAddressBar } from '@hooks';
 
 export function Sidebar() {
     console.log('Sidebar');
 
     const { get: getSettings, update: updateSettings } = useStore.Settings();
-    const { urlParams, updateUrl } = useAddressBar(getSettings().zustand);
+    const { urlParams, updateUrl } = useAddressBar();
 
     const [localPageSize, setLocalPageSize] = useState<string>(urlParams.pageSize.toString());
-
-    const [isRefreshing, setIsRefreshing] = useState(false);
-
-    const handleRefresh = async () => {
-        if (isRefreshing || !getSettings().zustand) return;
-
-        setIsRefreshing(true);
-
-        useZustandStore.getState().loadAll();
-
-        setTimeout(() => {
-            setIsRefreshing(false);
-        }, 2000);
-    };
 
     useEffect(() => {
         setLocalPageSize(urlParams.pageSize.toString());
     }, [urlParams.pageSize]);
+
     const [isOpen, setIsOpen] = useState(false);
 
     function handleDecreasePageSize() {
@@ -68,7 +55,7 @@ export function Sidebar() {
         >
             <div
                 className={`
-                    absolute top-4 left-0 w-full flex justify-center 
+                    absolute top-4 left-0 w-full flex justify-center
                     transition-opacity duration-400 z-10
                     ${!isOpen ? 'opacity-100 delay-300' : 'opacity-0 pointer-events-none'}
                 `}
@@ -108,7 +95,7 @@ export function Sidebar() {
                     </div>
 
                     <div className="flex flex-col flex-1 gap-1 mb-8">
-                        <span className="text-sm font-medium text-slate-500">1. Режим таблицы</span>
+                        <span className="text-sm font-medium text-slate-500">Режим таблицы</span>
                         <div className="flex items-center justify-center gap-5">
                             <SegmentToggle
                                 leftLabel="Native"
@@ -124,7 +111,7 @@ export function Sidebar() {
                         </div>
 
                         <span className="text-sm font-medium text-slate-500 mt-8">
-                            2. Режим просмотра
+                            Режим просмотра
                         </span>
                         <div className="flex items-center justify-center gap-5 mt-1">
                             <SegmentToggle
@@ -139,73 +126,14 @@ export function Sidebar() {
                                 }}
                             />
                         </div>
-
-                        <div
-                            className={`mt-2 transition ${!getSettings().dynamicMode ? 'opacity-40 pointer-events-none' : ''}`}
-                        >
-                            <span className="text-sm font-medium text-slate-500 mt-0 pl-4">
-                                Режим виртуализации
-                            </span>
-                            <div className="flex items-center justify-center gap-5 mt-1">
-                                <SegmentToggle
-                                    leftLabel="Native"
-                                    rightLabel="TanStack"
-                                    enabled={getSettings().tanstackVirtual}
-                                    onChange={() =>
-                                        updateSettings((prev) => ({
-                                            ...prev,
-                                            tanstackVirtual: !prev.tanstackVirtual,
-                                        }))
-                                    }
-                                />
-                            </div>
-                        </div>
-
-                        <span className="text-sm font-medium text-slate-500 mt-8">
-                            3. Режим подгрузки
-                        </span>
-                        <div className="flex flex-col items-center gap-2 mb-2">
-                            <SegmentToggle
-                                leftLabel="База данных"
-                                rightLabel="Zustand"
-                                enabled={getSettings().zustand}
-                                onChange={() =>
-                                    updateSettings((prev) => ({
-                                        ...prev,
-                                        zustand: !prev.zustand,
-                                    }))
-                                }
-                            />
-
-                            <button
-                                onClick={handleRefresh}
-                                disabled={!getSettings().zustand || isRefreshing}
-                                className={`
-                                    flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all
-                                    ${
-                                        !getSettings().zustand
-                                            ? 'text-slate-300 cursor-not-allowed'
-                                            : isRefreshing
-                                              ? 'text-blue-400 cursor-wait'
-                                              : 'text-blue-600 hover:bg-blue-100 cursor-pointer active:scale-95'
-                                    }
-                                `}
-                            >
-                                <RefreshCw
-                                    size={18}
-                                    className={`transition-transform ${isRefreshing ? 'animate-spin' : ''}`}
-                                />
-                                <span className="text-sm font-medium">Обновить данные</span>
-                            </button>
-                        </div>
                     </div>
 
                     {!getSettings().dynamicMode && (
                         <div
                             className="
-                                flex flex-col items-center justify-center 
-                                w-full rounded-lg p-3 gap-2 
-                                border-2 border-dashed border-slate-300 
+                                flex flex-col items-center justify-center
+                                w-full rounded-lg p-3 gap-2
+                                border-2 border-dashed border-slate-300
                                 mt-auto
                             "
                         >
@@ -231,7 +159,7 @@ export function Sidebar() {
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
                                             handlePageSizeBlur();
-                                            (e.target as HTMLInputElement).blur();
+                                            e.currentTarget.blur();
                                         }
                                     }}
                                     className="w-14 h-7 text-center text-slate-700 bg-slate-50 border border-slate-300 rounded-md focus:outline-none focus:border-blue-500 no-spinner"

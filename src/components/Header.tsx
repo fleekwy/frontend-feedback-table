@@ -1,13 +1,11 @@
 import { Search, CaseSensitive, WholeWord } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useStore } from '@store';
 import { useAddressBar, useDebounce } from '@hooks';
 
 export function Header() {
     console.log('Header');
 
-    const { get } = useStore.Settings();
-    const { urlParams, updateUrl } = useAddressBar(get().zustand);
+    const { urlParams, updateUrl } = useAddressBar();
 
     const [localSearchterm, setLocalSearchterm] = useState(urlParams.searchTerm);
 

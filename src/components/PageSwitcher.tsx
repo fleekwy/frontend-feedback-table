@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 import { ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { useStore } from '@store';
 import { useAddressBar } from '@hooks';
 
 export function PageSwitcher({ countPages }: { countPages: number }) {
     console.log('PageSwitcher');
 
-    const { get: getSettings } = useStore.Settings();
-    const { urlParams, updateUrl } = useAddressBar(getSettings().zustand);
+    const { urlParams, updateUrl } = useAddressBar();
     const [localPage, setLocalPage] = useState<string>(urlParams.page.toString());
 
     const safeCountPages = Math.max(1, Math.floor(countPages) || 1);
@@ -59,7 +57,7 @@ export function PageSwitcher({ countPages }: { countPages: number }) {
                 onBlur={commitPageChange}
                 onKeyDown={(e) => {
                     if (e.key === 'Enter') {
-                        (e.target as HTMLInputElement).blur();
+                        e.currentTarget.blur();
                     }
                 }}
                 className="w-12 h-7 sm:w-14 sm:h-7 text-center text-slate-700 bg-slate-50 border border-slate-300 rounded-md focus:outline-none focus:border-blue-500 no-spinner text-sm sm:text-base"

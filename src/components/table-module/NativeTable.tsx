@@ -1,9 +1,9 @@
 import { StarIcon } from '@components/icons/StarIcon';
 import { type Feedback } from '@interfaces';
 import { getHighlightedText, formatClockString } from '@utils';
-import { useStore } from '@store';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useAddressBar } from '@hooks';
+import type { VirtualItem } from '@tanstack/react-virtual';
 
 const getScrollParent = (node: HTMLElement | null): HTMLElement | null => {
     if (!node) {
@@ -121,24 +121,35 @@ const FeedbackTextCell = ({
 
 export function NativeTable({
     items,
+    virtualRows,
     paddingTop,
     paddingBottom,
     measureElement,
+    noWrapper = false,
 }: {
-    items: (Feedback & { virtualIndex?: number })[];
+    items: Feedback[];
+    virtualRows?: VirtualItem[];
     paddingTop?: number;
     paddingBottom?: number;
     measureElement?: (node: HTMLElement | null) => void;
+    noWrapper?: boolean;
 }) {
     console.log('NativeTable');
 
-    const { get } = useStore.Settings();
-    const { urlParams } = useAddressBar(get().zustand);
+    const { urlParams } = useAddressBar();
     const { searchTerm, caseSensitive, wholeWord } = urlParams;
 
-    return (
-        <div className="flex flex-col overflow-x-auto min-h-0 border-2 border-slate-200 rounded-lg bg-white">
-            <table className="w-full divide-y divide-slate-100 relative table-fixed min-w-[600px]">
+    const rowsToRender = useMemo(() => {
+        if (!virtualRows) {
+            return items.map((item) => ({ ...item, virtualIndex: undefined }));
+        }
+        return virtualRows
+            .filter((v) => v.index >= 0 && v.index < items.length)
+            .map((v) => ({ ...items[v.index], virtualIndex: v.index }));
+    }, [items, virtualRows]);
+
+    const tableContent = (
+        <table className="w-full divide-y divide-slate-100 relative table-fixed min-w-150">
             <thead className="bg-slate-100 table-fixed sticky top-0 z-10 shadow-sm h-12">
                 <tr>
                     <th className="text-center text-sm font-medium text-slate-500 uppercase w-[10%]">
@@ -165,39 +176,43 @@ export function NativeTable({
                     </tr>
                 ) : null}
 
-                {items.map((item) => {
+                {rowsToRender.map((itemWithIndex) => {
                     return (
                         <tr
-                            key={item.id}
+                            key={itemWithIndex.id}
                             className="hover:bg-slate-100 align-middle"
                             ref={measureElement}
-                            data-index={item.virtualIndex}
+                            data-index={itemWithIndex.virtualIndex}
                         >
                             <td className="text-center p-3 text-sm text-slate-500">
-                                #{item.id ?? 'N/A'}
+                                #{itemWithIndex.id ?? 'N/A'}
                             </td>
                             <td className="p-3">
                                 <span
                                     className={`flex items-center justify-center ${
-                                        item.rating === 5
+                                        itemWithIndex.rating === 5
                                             ? 'text-green-500'
-                                            : item.rating === 1
+                                            : itemWithIndex.rating === 1
                                               ? 'text-red-500'
                                               : 'text-yellow-500'
                                     }`}
                                 >
                                     <StarIcon className="w-5 h-5" />
                                     <span className="text-sm text-slate-500 font-medium ml-2">
-                                        {item.rating ?? 'N/A'}
+                                        {itemWithIndex.rating ?? 'N/A'}
                                     </span>
                                 </span>
                             </td>
                             <td className="text-center p-3 text-sm text-slate-500">
-                                {formatClockString(item.date_time ? new Date(item.date_time) : null)}
+                                {formatClockString(
+                                    itemWithIndex.date_time
+                                        ? new Date(itemWithIndex.date_time)
+                                        : null
+                                )}
                             </td>
                             <td className="text-left p-3">
                                 <FeedbackTextCell
-                                    text={item.feedback_text ?? ''}
+                                    text={itemWithIndex.feedback_text ?? ''}
                                     searchTerm={searchTerm}
                                     caseSensitive={caseSensitive}
                                     wholeWord={wholeWord}
@@ -214,6 +229,15 @@ export function NativeTable({
                 ) : null}
             </tbody>
         </table>
+    );
+
+    if (noWrapper) {
+        return tableContent;
+    }
+
+    return (
+        <div className="flex flex-col overflow-x-auto min-h-0 border-2 border-slate-200 rounded-lg bg-white">
+            {tableContent}
         </div>
     );
 }

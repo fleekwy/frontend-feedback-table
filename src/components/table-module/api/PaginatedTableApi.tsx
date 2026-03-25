@@ -2,15 +2,13 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { getFeedbacks } from '@api';
 import { type FeedbackResponse } from '@interfaces';
-import { useStore } from '@store';
 import { PaginatedTable } from '@components';
 import { useAddressBar } from '@hooks';
 
 export function PaginatedTableApi() {
     console.log('PaginatedTable');
 
-    const { get } = useStore.Settings();
-    const { urlParams } = useAddressBar(get().zustand);
+    const { urlParams } = useAddressBar();
 
     const queryParams = useMemo(
         () => ({

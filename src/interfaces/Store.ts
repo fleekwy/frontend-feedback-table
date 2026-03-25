@@ -6,8 +6,6 @@ export interface SearchSettings {
 
 export interface Settings {
     tanstackTable: boolean;
-    tanstackVirtual: boolean;
-    zustand: boolean;
     dynamicMode: boolean;
 }
 

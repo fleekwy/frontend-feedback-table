@@ -2,16 +2,16 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getFeedbacks } from '@api';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useStore } from '@store';
-import { NativeTable, TanstackTable } from '@components';
+import { TanstackTable, NativeTable } from '@components';
 import { useAddressBar } from '@hooks';
-import type { Feedback } from '@interfaces';
+import { useStore } from '@store';
+import type { VirtualItem } from '@tanstack/react-virtual';
 
 export function TanstackVirtualApi() {
     console.log('TanstackVirtualApi');
 
     const { get } = useStore.Settings();
-    const { urlParams } = useAddressBar(get().zustand);
+    const { urlParams } = useAddressBar();
     const { searchTerm, caseSensitive, wholeWord, sortBy, pageSize } = urlParams;
 
     const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -48,11 +48,11 @@ export function TanstackVirtualApi() {
     const virtualizer = useVirtualizer({
         count: allItems.length,
         getScrollElement: () => tableContainerRef.current,
-        estimateSize: () => 60,
+        estimateSize: () => 100,
         overscan: 10,
     });
 
-    const virtualItems = virtualizer.getVirtualItems();
+    const virtualItems = virtualizer.getVirtualItems() as VirtualItem[];
 
     useEffect(() => {
         const lastItem = virtualItems[virtualItems.length - 1];
@@ -96,14 +96,10 @@ export function TanstackVirtualApi() {
         );
     }
 
-    const visibleItems = (virtualItems ?? [])
-        .map((v) => allItems[v.index])
-        .filter((item): item is Feedback => item !== undefined);
-
     return (
         <div
             ref={tableContainerRef}
-            className="flex flex-col overflow-y-auto min-h-0 border-2 border-slate-200 rounded-lg bg-white"
+            className="flex flex-col overflow-y-auto overflow-x-auto min-h-0 border-2 border-slate-200 rounded-lg bg-white w-full"
         >
             {get().tanstackTable ? (
                 <TanstackTable
@@ -112,12 +108,16 @@ export function TanstackVirtualApi() {
                     paddingTop={paddingTop}
                     paddingBottom={paddingBottom}
                     measureElement={virtualizer.measureElement}
+                    noWrapper={true}
                 />
             ) : (
                 <NativeTable
-                    items={visibleItems}
+                    items={allItems}
+                    virtualRows={virtualItems}
                     paddingTop={paddingTop}
                     paddingBottom={paddingBottom}
+                    measureElement={virtualizer.measureElement}
+                    noWrapper={true}
                 />
             )}
 
